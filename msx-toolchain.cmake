@@ -7,6 +7,11 @@ set(CMAKE_C_COMPILER ${Z88DK_ROOT}/bin/zcc)
 set(CMAKE_ASM_COMPILER ${Z88DK_ROOT}/bin/zcc)
 
 set(CMAKE_C_FLAGS "+msx -subtype=msxdos")
-set(CMAKE_CXX_FLAGS "+msx -subtype=msxdos")
+# set(CMAKE_CXX_FLAGS "+msx -subtype=msxdos -DAMALLOC")
 
-include_directories(${Z88DK_ROOT}/include)
+set(ld_flags " -llib3d -lm -lndos")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ld_flags}")
+
+# CFLAGS = +msx -vn -llib3d  -lm -lndos -create-app -DAMALLOC
+
+# options : https://www.z88dk.org/wiki/doku.php?id=zcc
