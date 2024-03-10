@@ -5,7 +5,4 @@ cmake_minimum_required(VERSION 3.10)
 project(MyMSXProject C)
 
 # 実行ファイルを生成するためのソースファイルを指定
-add_executable(
-	MyMSXProgram
-	main.c)
-
+add_executable(MyMSXProgram src/main.c)
