@@ -1,7 +1,36 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <msx.h>
 
-int main(int argc, char *argv[])
+void setScreen(int mode)
 {
-  return 0;
+    __asm__("\
+    LD A, L;\n \
+    CALL 0x005F;\n \
+    ");
+}
+
+void initScreen()
+{
+    setScreen(0);
+}
+
+/**
+ * Halt the CPU
+ */
+void halt()
+{
+    __asm__("halt;");
+}
+
+void print(const char *text)
+{
+    vdp_vwrite((void *)text, 0x0000, strlen(text));
+}
+
+void main()
+{
+    initScreen();
+    print("Hello World");
+    halt();
 }

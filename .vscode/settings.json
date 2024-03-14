@@ -3,4 +3,8 @@
     "cmake.configureArgs": [
         "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/msx-toolchain.cmake"
     ],
+    "files.associations": {
+        "*.c": "c",
+        "*.h": "c",
+    },
 }
