@@ -1,103 +1,36 @@
-/*=========================================================================
-
-GFX EXAMPLE CODE - #1
-    "pixel stars"
-
-Copyright (C) 2004  Rafael de Oliveira Jannone
-
-This example's source code is Public Domain.
-
-WARNING: The author makes no guarantees and holds no responsibility for
-any damage, injury or loss that may result from the use of this source
-code. USE IT AT YOUR OWN RISK.
-
-Contact the author:
-    by e-mail : rafael AT jannone DOT org
-    homepage  : http://jannone.org/gfxlib
-    ICQ UIN   : 10115284
-
-=========================================================================*/
-
-#include <stdlib.h>
-#include <msx/gfx.h>
-#include <lib3d.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <msx.h>
 
-typedef struct
+void setScreen(int mode)
 {
-    int x;
-    int y;
-    int z;
-    unsigned int addr, last;
-    unsigned char sub;
-} star_t;
-
-void star_randomize(star_t *st)
-{
-    st->x = i2f((rand() & 63) - 32);
-    st->y = i2f((rand() & 63) - 32);
-    st->z = 64;
+    __asm__("\
+    LD A, L;\n \
+    CALL 0x005F;\n \
+    ");
 }
 
-void star_move(star_t *st)
+void initScreen()
 {
-    int x, y, z;
-    z = (st->z -= 2);
-    x = st->x / z + 128;
-    y = st->y / z + 96;
-    if (z < 1 || x < 0 || x >= MODE2_WIDTH || y < 0 || y >= MODE2_HEIGHT)
-    {
-        star_randomize(st);
-        z = st->z;
-        x = st->x / z + 128;
-        y = st->y / z + 96;
-    }
-    st->last = st->addr;
-    st->addr = map_pixel(x, y);
-    st->sub = map_subpixel(x);
+    setScreen(0);
 }
 
-#define MAX_STARS 16
+/**
+ * Halt the CPU
+ */
+void halt()
+{
+    __asm__("halt;");
+}
+
+void print(const char *text)
+{
+    vdp_vwrite((void *)text, 0x0000, strlen(text));
+}
 
 void main()
 {
-    unsigned char c;
-    star_t *st, stars[MAX_STARS];
-
-    // printf("%d\n",(i2f((rand() & 63)-32)));
-
-    vdp_color(15, 1, 1);
-
-    // set video mode to screen 2
-    vdp_set_mode(mode_2);
-
-    // set whole screen to color white/black
-    vdp_vfill(MODE2_ATTR, 0xf1, MODE2_MAX);
-
-    // initialize stars
-    for (c = 0; c < MAX_STARS; c++)
-    {
-        st = stars + c;
-        star_randomize(st);
-        st->z = (rand() & 63) << 2;
-        st->addr = 0;
-    }
-
-    // animation loop
-    while (!getk())
-    {
-        // calculate star movement
-        for (st = stars, c = 0; c < MAX_STARS; c++, st++)
-            star_move(st);
-
-        // erase previous stars
-        for (st = stars, c = 0; c < MAX_STARS; c++, st++)
-            vdp_vpoke(st->last, 0);
-
-        // show new stars
-        for (st = stars, c = 0; c < MAX_STARS; c++, st++)
-            vmerge(st->addr, st->sub);
-    }
-
-    vdp_set_mode(mode_0);
+    initScreen();
+    print("Hello World");
+    halt();
 }
